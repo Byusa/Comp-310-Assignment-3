@@ -87,18 +87,18 @@ int *append(int *arr1, int n1, int *arr2, int n2)
     return res;
 }
 //a Method that checks the difference with each
-int nearestService(int *req)
+int nearestService(int *req, int begin)
 {
     int *diff;
-    int min = abs(START - *(req + 0));
+    int min = abs(begin - *(req + 0));
     int numReq = sizeof(req);
     int res = *(req + 0);
     diff = malloc(numReq * sizeof(int));
     for (int i = 0; i < numReq; i++)
     {
-        *(diff + i) = abs(START - *(req + i));
+        *(diff + i) = abs(begin - *(req + i));
 
-        if (min > *(diff + i))
+        if ((min > *(diff + i)) && ((*(req + i))!=0)) /////////////eeeeeeeee
         {
             min = *(diff + i);
             res = *(req + i);
@@ -107,7 +107,7 @@ int nearestService(int *req)
     return res;
 }
 
-bool isvalueinarray(int val, int *arr)
+bool isvalueinarray( int *arr, int val )
 {
     int size = sizeof(arr);
     for (int i = 0; i < size; i++)
@@ -130,6 +130,31 @@ void swap(int *a, int *b)
     }
 }
 
+//removing an element in an array
+int *removeAnElment(int *request, int numRequest, int element){
+    int *req;
+    req = malloc((numRequest-1) * sizeof(int));
+    int i=0;
+    while(i<numRequest){
+        if(request[i]!= element ){
+            req[i]=request[i];
+        }
+        i++;
+    }
+    return req;
+}
+
+//duplicate an array
+int *populate(int *request, int numRequest){
+    int *req;
+    req = malloc((numRequest) * sizeof(int));
+    int i=0;
+    while(i<numRequest){
+            req[i]=request[i];
+        i++;
+    }
+    return req;
+}
 //Prints the sequence and the performance metric
 void printSeqNPerformance(int *request, int numRequest)
 {
@@ -158,105 +183,73 @@ void accessFCFS(int *request, int numRequest)
     return;
 }
 
+
 //access the disk location in SSTF
 void accessSSTF(int *request, int numRequest)
 {
-    int head = START;
-    int bg = 0, sm = 0;
-    //loop to get the size of (bigger than head) requests and (smaller than head)
-    for (int i = 0; i < numRequest; i++)
-    {
-        if ((*(request + i)) > head)
-        {
-            bg++;
+
+    int *req,*ans;
+    int num=numRequest;
+    ans = malloc((numRequest) * sizeof(int)); 
+    req = malloc((numRequest) * sizeof(int)); 
+    int res = 0, i=0, j=0,k=0, begin = START;
+
+    req = populate(request,numRequest);
+
+    while(i<(numRequest)){
+        res=nearestService(req,begin);
+        (*(ans + i)) = res;
+        //begin info
+        begin = res;
+        printf("begin %d\t", begin);
+        //update request pointer info
+        if(num>2){
+            req = removeAnElment(req, num, begin);
+            num--;
         }
-        else
-        {
-            sm++;
-        }
-    }
-    //write your logic here
-    int *bigger;
-    bigger = malloc((bg + 1) * sizeof(int));
-    int *smaller;
-    smaller = malloc((sm + 1) * sizeof(int));
-    printf("\n----------------\n");
-    printf("SSTF :");
-    //separate bigger and smaller requests
-    int k = 0, l = 0, i = 0;
-    while (i <= numRequest)
-    {
-        if (i < numRequest)
-        {
-            if ((*(request + i)) > head)
-            {
-                *(bigger + k) = *(request + i);
-                k++;
-            }
-            else
-            {
-                *(smaller + l) = *(request + i);
-                l++;
-            }
-        }
-        else
-        {
-            //*(bigger+k)=HIGH;
-            *(smaller + l) = LOW;
-        }
+       //printSeqNPerformance(req, (numRequest));
         i++;
     }
-    int *p1, *p2, *ans;
-    p1 = malloc(sizeof(bg + 1));
-    p2 = malloc(sizeof(sm + 1));
-    ans = malloc((numRequest + 2) * sizeof(int)); //answer is a bit bigger
-    p1 = sortAscedingOrder(bigger, (bg + 1));
-    int newCnt1 = sizeof(p1);
-    p2 = sortDescendingOrder(smaller, (sm + 1));
-    printf("size----------,%d\n", newCnt1);
-    int newCnt2 = sizeof(p2);
-    ////
-    int s = 0, b = 0;
-    i = 0;
-    int diffB, diffS, temp;
-    /*for(int q =0 ; q<8; q++){
-        printf("\n the p1, %d", (*(p2+q)));
-    }*/
-    //fucked up
-    while (i < numRequest)
-    {
-        if ((*(p1 + i) && (*(p2 + i))) != 0)
-        {
-            diffB = abs(head - (*(p1 + i)));
-            //printf("\n the p1, %d", (*(p1+i)));
-            diffS = abs(head - (*(p2 + i)));
-
-            if (diffB < diffS)
-            {
-                temp = (*(p1 + b));
-                (*(ans + i)) = temp;
-                head = (*(p1 + b));
-                b++;
-                //printf("\n the big, %d", (*(ans+i)));
-            }
-            else
-            {
-                temp = (*(p2 + s));
-                (*(ans + i)) = temp;
-                head = (*(p2 + s));
-                s++;
-                printf("\n the sm, %d", (*(ans + i)));
-            }
-        }
-        //printf("\n the head, %d", head);
-
-        i++;
-    }
-    ///
-    printSeqNPerformance(ans, (numRequest * 2));
-    printf("----------------\n");
+    //printf("req\n");
+    printSeqNPerformance(ans, (numRequest));
     return;
 }
+
+//access the disk location in SSTF
+/*void accessSSTF(int *request, int numRequest)
+{
+
+    int *req,*ans,num=numRequest;
+    ans = malloc((numRequest) * sizeof(int)); 
+    req = malloc((numRequest) * sizeof(int)); 
+    int res = 0, i=0, j=0,k=0, begin = START;
+    while(k<numRequest){
+            (*(req+j))= (*(request+k));
+            j++;
+            k++;
+    }
+    while(i<numRequest){
+        res=nearestService(req,begin);
+        (*(ans + i)) = res;
+        //begin info
+        begin = res;
+        printf("begin %d\t", begin);
+        //update request pointer info
+        while((k<numRequest)){
+            if((*request+k)!= begin){
+                (*(req+j))= (*(request+k));
+            }
+            j++;
+            k++;
+        }
+       // printSeqNPerformance(req, (numRequest));
+        num--;
+        i++;
+    }
+    //printf("req\n");
+    //printSeqNPerformance(ans, (numRequest));
+    return;
+}*/
 
 //access the disk location in SCAN
 void accessSCAN(int *request, int numRequest)
