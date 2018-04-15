@@ -60,8 +60,8 @@ int *sortDescendingOrder(int *arr, int len)
 //A method that appends
 int *append(int *arr1, int n1, int *arr2, int n2)
 {
-   //int n1 = sizeof(arr1);
-   //int n2 = sizeof(arr2);
+    //int n1 = sizeof(arr1);
+    //int n2 = sizeof(arr2);
     int *res;
     res = malloc((n1 + n2) * sizeof(int));
     int len = n1 + n2;
@@ -87,27 +87,30 @@ int *append(int *arr1, int n1, int *arr2, int n2)
     return res;
 }
 //a Method that checks the difference with each
-int nearestService(int *req, int begin)
+int nearestService(int *req, int len, int begin)
 {
     int *diff;
     int min = abs(begin - *(req + 0));
-    int numReq = sizeof(req);
     int res = *(req + 0);
-    diff = malloc(numReq * sizeof(int));
-    for (int i = 0; i < numReq; i++)
+    diff = malloc(len * sizeof(int));
+    for (int i = 0; i < len; i++)
     {
         *(diff + i) = abs(begin - *(req + i));
 
-        if ((min > *(diff + i)) && ((*(req + i))!=0)) /////////////eeeeeeeee
+        if ((min > *(diff + i)))
         {
             min = *(diff + i);
             res = *(req + i);
         }
     }
+    /*int ans[2];
+    ans[0]=min;
+    ans[1]=res;
+    return ans;*/
     return res;
 }
 
-bool isvalueinarray( int *arr, int val )
+bool isvalueinarray(int *arr, int val)
 {
     int size = sizeof(arr);
     for (int i = 0; i < size; i++)
@@ -131,13 +134,18 @@ void swap(int *a, int *b)
 }
 
 //removing an element in an array
-int *removeAnElment(int *request, int numRequest, int element){
+int *removeAnElment(int *request, int numRequest, int element)
+{
     int *req;
-    req = malloc((numRequest-1) * sizeof(int));
-    int i=0;
-    while(i<numRequest){
-        if(request[i]!= element ){
-            req[i]=request[i];
+    req = malloc((numRequest - 1) * sizeof(int));
+    int i = 0;
+    int indexOfReq =0;
+    while (i < numRequest)
+    {
+        if (request[i] != element)
+        {
+            req[indexOfReq] = request[i];
+            indexOfReq++;
         }
         i++;
     }
@@ -145,12 +153,14 @@ int *removeAnElment(int *request, int numRequest, int element){
 }
 
 //duplicate an array
-int *populate(int *request, int numRequest){
+int *populate(int *request, int numRequest)
+{
     int *req;
     req = malloc((numRequest) * sizeof(int));
-    int i=0;
-    while(i<numRequest){
-            req[i]=request[i];
+    int i = 0;
+    while (i < numRequest)
+    {
+        req[i] = request[i];
         i++;
     }
     return req;
@@ -183,78 +193,61 @@ void accessFCFS(int *request, int numRequest)
     return;
 }
 
+//access the disk location in SSTF
+/*void accessSSTF(int *request, int numRequest)
+{
+    int *req, *ans, two;
+    int num = numRequest;
+    ans = malloc((numRequest) * sizeof(int));
+    req = malloc((numRequest) * sizeof(int));
+    two = malloc((2) * sizeof(int));
+    for(int p=0; p<2; p++){
+        res =(*(two+));
+        min = (*(two+2));; 
+    }
+    int i = 0, j = 0, k = 0, begin = START, len;
+
+    req = populate(request, numRequest);
+    while (i < (numRequest))
+    {
+        len = num;
+        res =(*(two+1));
+        min = (*(two+2));;
+    }
+}*/
 
 //access the disk location in SSTF
 void accessSSTF(int *request, int numRequest)
 {
-
     int *req,*ans;
     int num=numRequest;
     ans = malloc((numRequest) * sizeof(int)); 
     req = malloc((numRequest) * sizeof(int)); 
-    int res = 0, i=0, j=0,k=0, begin = START;
+    int res = 0, i=0, j=0,k=0, begin = START, len;
 
     req = populate(request,numRequest);
-
+   
     while(i<(numRequest)){
-        res=nearestService(req,begin);
+        len = num;
+        res = nearestService(req,len, begin);
         (*(ans + i)) = res;
         //begin info
         begin = res;
-        printf("begin %d\t", begin);
-        //update request pointer info
-        if(num>2){
-            req = removeAnElment(req, num, begin);
-            num--;
-        }
-       //printSeqNPerformance(req, (numRequest));
+
+        req = removeAnElment(req, num, begin);
+        num--;
+
         i++;
     }
-    //printf("req\n");
     printSeqNPerformance(ans, (numRequest));
     return;
+    
 }
-
-//access the disk location in SSTF
-/*void accessSSTF(int *request, int numRequest)
-{
-
-    int *req,*ans,num=numRequest;
-    ans = malloc((numRequest) * sizeof(int)); 
-    req = malloc((numRequest) * sizeof(int)); 
-    int res = 0, i=0, j=0,k=0, begin = START;
-    while(k<numRequest){
-            (*(req+j))= (*(request+k));
-            j++;
-            k++;
-    }
-    while(i<numRequest){
-        res=nearestService(req,begin);
-        (*(ans + i)) = res;
-        //begin info
-        begin = res;
-        printf("begin %d\t", begin);
-        //update request pointer info
-        while((k<numRequest)){
-            if((*request+k)!= begin){
-                (*(req+j))= (*(request+k));
-            }
-            j++;
-            k++;
-        }
-       // printSeqNPerformance(req, (numRequest));
-        num--;
-        i++;
-    }
-    //printf("req\n");
-    //printSeqNPerformance(ans, (numRequest));
-    return;
-}*/
 
 //access the disk location in SCAN
 void accessSCAN(int *request, int numRequest)
 {
-   int head = START;
+    int head = START;
     int bg = 0, sm = 0;
     //loop to get the size of (bigger than head) requests and (smaller than head)
     for (int i = 0; i < numRequest; i++)
@@ -307,19 +300,22 @@ void accessSCAN(int *request, int numRequest)
     //printf("\nsize of p1, %d",newCnt1);
 
     ans = malloc((numRequest + 2) * sizeof(int)); //answer is a bit bigger
-   // int near = nearestService(request);
+                                                  // int near = nearestService(request);
 
     int nearBig = HIGH - START;
     int nearSmall = START - LOW;
 
-    if(nearSmall<nearBig){
-       p2 = sortDescendingOrder(smaller, (sm + 1));
-       p1 = sortAscedingOrder(bigger, (bg + 1));
-        ans = append(p2,(sm+1), p1,(bg+1));
-    }else{
+    if (nearSmall < nearBig)
+    {
+        p2 = sortDescendingOrder(smaller, (sm + 1));
+        p1 = sortAscedingOrder(bigger, (bg + 1));
+        ans = append(p2, (sm + 1), p1, (bg + 1));
+    }
+    else
+    {
         p2 = sortAscedingOrder(smaller, (sm + 1));
         p1 = sortDescendingOrder(bigger, (bg + 1));
-        ans = append(p1,(bg+1), p2,(sm+1));
+        ans = append(p1, (bg + 1), p2, (sm + 1));
     }
     printSeqNPerformance(ans, (numRequest + 2));
     printf("----------------\n");
@@ -373,28 +369,25 @@ void accessCSCAN(int *request, int numRequest)
         i++;
     }
     int *p1, *p2, *ans;
-
-    // p1 = malloc(sizeof(bg+1));
-    // p2 = malloc(sizeof(sm+1));
     p1 = malloc((bg + 1) * sizeof(int));
-
     p2 = malloc((sm + 1) * sizeof(int));
-    //printf("\nsize of p1, %d",newCnt1);
 
     ans = malloc((numRequest + 2) * sizeof(int)); //answer is a bit bigger
-   // int near = nearestService(request);
-
+                                                  // int near = nearestService(request);
     int nearBig = HIGH - START;
     int nearSmall = START - LOW;
 
-    if(nearBig<nearSmall){
-       p1 = sortAscedingOrder(bigger, (bg + 1));
+    if (nearBig < nearSmall)
+    {
+        p1 = sortAscedingOrder(bigger, (bg + 1));
         p2 = sortAscedingOrder(smaller, (sm + 1));
-        ans = append(p1,(bg+1), p2,(sm+1));
-    }else{
+        ans = append(p1, (bg + 1), p2, (sm + 1));
+    }
+    else
+    {
         p1 = sortDescendingOrder(bigger, (bg + 1));
         p2 = sortDescendingOrder(smaller, (sm + 1));
-        ans = append(p2,(sm+1), p1,(bg+1));
+        ans = append(p2, (sm + 1), p1, (bg + 1));
     }
     printSeqNPerformance(ans, (numRequest + 2));
     printf("----------------\n");
@@ -419,9 +412,9 @@ void accessLOOK(int *request, int numRequest)
         }
     }
     int *bigger;
-    bigger = malloc (bg  * sizeof(int));
+    bigger = malloc(bg * sizeof(int));
     int *smaller;
-    smaller =malloc (sm * sizeof(int));
+    smaller = malloc(sm * sizeof(int));
     printf("\n----------------\n");
     printf("LOOK :");
     int k = 0, l = 0, i = 0;
@@ -448,28 +441,26 @@ void accessLOOK(int *request, int numRequest)
         i++;
     }
     int *p1, *p2, *ans;
-
-    // p1 = malloc(sizeof(bg+1));
-    // p2 = malloc(sizeof(sm+1));
     p1 = malloc(bg * sizeof(int));
-
     p2 = malloc(sm * sizeof(int));
-    //printf("\nsize of p1, %d",newCnt1);
 
     ans = malloc(numRequest * sizeof(int)); //answer is a bit bigger
-   // int near = nearestService(request);
+                                            // int near = nearestService(request);
 
     int nearBig = HIGH - START;
     int nearSmall = START - LOW;
 
-    if(nearSmall<nearBig){
-       p2 = sortDescendingOrder(smaller, sm );
-       p1 = sortAscedingOrder(bigger, bg );
+    if (nearSmall < nearBig)
+    {
+        p2 = sortDescendingOrder(smaller, sm);
+        p1 = sortAscedingOrder(bigger, bg);
         ans = append(p2, sm, p1, bg);
-    }else{
+    }
+    else
+    {
         p2 = sortAscedingOrder(smaller, sm);
         p1 = sortDescendingOrder(bigger, bg);
-        ans = append(p1, bg , p2, sm);
+        ans = append(p1, bg, p2, sm);
     }
     printSeqNPerformance(ans, numRequest);
     printf("----------------\n");
@@ -525,12 +516,15 @@ void accessCLOOK(int *request, int numRequest)
     int nearBig = HIGH - START;
     int nearSmall = START - LOW;
 
-    if(nearBig<nearSmall){
-       p1 = sortAscedingOrder(bigger, bg);
+    if (nearBig < nearSmall)
+    {
+        p1 = sortAscedingOrder(bigger, bg);
         p2 = sortAscedingOrder(smaller, sm);
-        ans = append(p1, bg , p2, sm);
-    }else{
-        p1 = sortDescendingOrder(bigger,  bg);
+        ans = append(p1, bg, p2, sm);
+    }
+    else
+    {
+        p1 = sortDescendingOrder(bigger, bg);
         p2 = sortDescendingOrder(smaller, sm);
         ans = append(p2, sm, p1, bg);
     }
@@ -539,21 +533,12 @@ void accessCLOOK(int *request, int numRequest)
     return;
 }
 
-
 int main()
 {
     int *request, numRequest, i, ans;
 
     //allocate memory to store requests
-    /*printf("Enter the number of disk access requests : ");
-    scanf("%d", &numRequest);*/
     request = malloc(numRequest * sizeof(int));
-
-    /* printf("Enter the requests ranging between %d and %d\n", LOW, HIGH);
-    for (i = 0; i < numRequest; i++)
-    {
-        scanf("%d", &request[i]);
-    }*/
     //added
     numRequest = 8;
 
